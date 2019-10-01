@@ -1,2 +1,2 @@
 # Robot Guardee
-IPAddress ip(192,168,18,190)
+* IPAddress ip(192,168,18,190)
