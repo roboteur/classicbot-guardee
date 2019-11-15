@@ -14,7 +14,7 @@
 #include "binary.h"
 
 char* password = "X9425TE9";
-char* mySsid = "THRBTRWRLD";
+char* mySsid = "ZTEH108N_3C01E";
 
 bool ota_flag = true;
 uint16_t time_elapsed = 0;
@@ -45,7 +45,14 @@ LedControl lc=LedControl(D5,D7,D6,1);
 unsigned long delaytime=1000;
 
 // happy face
-byte hf[8]= {B00111100,B01000010,B10100101,B10000001,B10100101,B10011001,B01000010,B00111100};
+byte hf[8]= {B00111100,
+             B01000010,
+             B10010101,
+             B10100001,
+             B10100001,
+             B10010101,
+             B01000010,
+             B00111100};
 // neutral face
 byte nf[8]={B00111100, B01000010,B10100101,B10000001,B10111101,B10000001,B01000010,B00111100};
 // sad face
@@ -269,7 +276,7 @@ String SendHTML(float Temperaturestat,float Humiditystat, float Lightstat){
   }
 
   void drawFaces(){
-  // Display sad face
+ /* // Display sad face
   lc.setRow(0,0,sf[0]);
   lc.setRow(0,1,sf[1]);
   lc.setRow(0,2,sf[2]);
@@ -279,7 +286,10 @@ String SendHTML(float Temperaturestat,float Humiditystat, float Lightstat){
   lc.setRow(0,6,sf[6]);
   lc.setRow(0,7,sf[7]);
   delay(delaytime);
-  
+
+ */
+
+  /* 
   // Display neutral face
   lc.setRow(0,0,nf[0]);
   lc.setRow(0,1,nf[1]);
@@ -290,6 +300,8 @@ String SendHTML(float Temperaturestat,float Humiditystat, float Lightstat){
   lc.setRow(0,6,nf[6]);
   lc.setRow(0,7,nf[7]);
   delay(delaytime);
+
+  */
   
   // Display happy face
   lc.setRow(0,0,hf[0]);
