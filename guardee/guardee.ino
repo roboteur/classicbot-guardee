@@ -10,6 +10,9 @@
 #define DHTPIN D1                          // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT11                      // DHT 11
 
+#include "LedControl.h"
+#include "binary.h"
+
 char* password = "X9425TE9";
 char* mySsid = "THRBTRWRLD";
 
@@ -29,6 +32,24 @@ ESP8266WebServer server;
 IPAddress ip(192,168,18,190);
 IPAddress gateway(192,168,11,0);
 IPAddress subnet(255,255,255,0);
+
+/*
+ DIN connects to pin 5
+ CLK connects to pin 7
+ CS connects to pin 6
+*/
+
+LedControl lc=LedControl(D5,D7,D6,1); 
+
+// delay time between faces
+unsigned long delaytime=1000;
+
+// happy face
+byte hf[8]= {B00111100,B01000010,B10100101,B10000001,B10100101,B10011001,B01000010,B00111100};
+// neutral face
+byte nf[8]={B00111100, B01000010,B10100101,B10000001,B10111101,B10000001,B01000010,B00111100};
+// sad face
+byte sf[8]= {B00111100,B01000010,B10100101,B10000001,B10011001,B10100101,B01000010,B00111100};
 
 void setup() {
                         
@@ -127,6 +148,13 @@ void setup() {
   WiFi.softAPConfig(ip, gateway, subnet);
   WiFi.softAP(mySsid, password);
 
+  
+
+  lc.shutdown(0,false);
+  // Set brightness to a medium value
+  lc.setIntensity(0,8);
+  // Clear the display
+  lc.clearDisplay(0);  
 }
 
 void loop() {
@@ -154,28 +182,6 @@ void loop() {
     
   server.handleClient();
 
-  // Temperature = dht.readTemperature(); // Gets the values of the temperature
-  // Humidity = dht.readHumidity(); // Gets the values of the humidity 
-  // int Light = analogRead(A0);
-
-  // digitalWrite(pinOut02, HIGH);                  // Y1
-  // digitalWrite(pinOut03, LOW);
-  // digitalWrite(pinOut04, LOW);
-  // delay(250);
-    // valueInA1 = analogRead(pinInA0);             // Sensing voltage input in pin A0 and converting to integer values (0 - 1023)
-    // Serial.print("A1 = ");                       // Label the ouput 
-    // Serial.println (valueInA1);
-    // delay(750);
-
-  // digitalWrite(pinOut02, LOW);                   // Y2
-  // digitalWrite(pinOut03, HIGH);
-  // digitalWrite(pinOut04, LOW);
-  // delay(250);
-    // valueInA2 = analogRead(pinInA0);             // Sensing voltage input in pin A0 and converting to integer values (0 - 1023)
-    // Serial.print("A2 = ");                       // Label the ouput 
-    // Serial.println (valueInA2);
-    // delay(750); 
-
   Serial.println(" ");
   Serial.print("Temperature: ");
   Serial.println(Temperature);
@@ -186,7 +192,7 @@ void loop() {
   Serial.print("Sound Provision: ");
  //  Serial.println(valueInA2);
 
- 
+  drawFaces();
 }
 
 void toggleLED()
@@ -261,3 +267,38 @@ String SendHTML(float Temperaturestat,float Humiditystat, float Lightstat){
   ptr +="</html>\n";
   return ptr;
   }
+
+  void drawFaces(){
+  // Display sad face
+  lc.setRow(0,0,sf[0]);
+  lc.setRow(0,1,sf[1]);
+  lc.setRow(0,2,sf[2]);
+  lc.setRow(0,3,sf[3]);
+  lc.setRow(0,4,sf[4]);
+  lc.setRow(0,5,sf[5]);
+  lc.setRow(0,6,sf[6]);
+  lc.setRow(0,7,sf[7]);
+  delay(delaytime);
+  
+  // Display neutral face
+  lc.setRow(0,0,nf[0]);
+  lc.setRow(0,1,nf[1]);
+  lc.setRow(0,2,nf[2]);
+  lc.setRow(0,3,nf[3]);
+  lc.setRow(0,4,nf[4]);
+  lc.setRow(0,5,nf[5]);
+  lc.setRow(0,6,nf[6]);
+  lc.setRow(0,7,nf[7]);
+  delay(delaytime);
+  
+  // Display happy face
+  lc.setRow(0,0,hf[0]);
+  lc.setRow(0,1,hf[1]);
+  lc.setRow(0,2,hf[2]);
+  lc.setRow(0,3,hf[3]);
+  lc.setRow(0,4,hf[4]);
+  lc.setRow(0,5,hf[5]);
+  lc.setRow(0,6,hf[6]);
+  lc.setRow(0,7,hf[7]);
+  delay(delaytime);
+}
