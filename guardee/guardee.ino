@@ -1,4 +1,4 @@
-
+/* ROBOT GUARDEE by The Roboteur */
 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
@@ -18,6 +18,7 @@ char* mySsid = "ZTEH108N_3C01E";
 
 bool ota_flag = true;
 uint16_t time_elapsed = 0;
+int state_current = 0;
 
 float Temperature;
 float Humidity;
@@ -45,18 +46,42 @@ LedControl lc=LedControl(D5,D7,D6,1);
 unsigned long delaytime=1000;
 
 // happy face
-byte hf[8]= {B00111100,
-             B01000010,
-             B10010101,
-             B10100001,
-             B10100001,
-             B10010101,
-             B01000010,
-             B00111100};
+byte hf[8]= {B00000000,
+             B00110110,
+             B01000110,
+             B01000000,
+             B01000000,
+             B01000110,
+             B00110110,
+             B00000000};
 // neutral face
-byte nf[8]={B00111100, B01000010,B10100101,B10000001,B10111101,B10000001,B01000010,B00111100};
+byte nf[8]= {B00000000,
+             B00100100,
+             B01000100,
+             B01000000,
+             B01000000,
+             B01000100,
+             B00100100,
+             B00000000};
 // sad face
-byte sf[8]= {B00111100,B01000010,B10100101,B10000001,B10011001,B10100101,B01000010,B00111100};
+byte sf[8]= {B00000000,
+             B01000100,
+             B00100100,
+             B00100000,
+             B00100000,
+             B00100100,
+             B01000100,
+             B00000000};
+
+byte bf[8]= {B00000000,
+             B00100110,
+             B01000110,
+             B01000000,
+             B01000000,
+             B01000110,
+             B00100110,
+             B00000000};
+             
 
 void setup() {
                         
@@ -64,33 +89,10 @@ void setup() {
   Serial.println("Starting ...");
   
   pinMode(pin_led, OUTPUT);
-
-  WiFi.mode(WIFI_AP); /* Access Point Only */  
-  // WiFi.mode(WIFI_STA); /* Station Point Only */
-  // WiFi.mode(WIFI_AP_STA); /* Both */
-
-  /* 
-  WiFi.begin(ssid, password);
-  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("Connection Failed! Restarting...");
-    delay(5000);
-    ESP.restart();
-  }
-
-  */
   
-  // Port defaults to 8266
-  // ArduinoOTA.setPort(8266);
-
-  // Hostname defaults to esp8266-[ChipID]
-  // ArduinoOTA.setHostname("myesp8266");
-
-  // No authentication by default
-  // ArduinoOTA.setPassword("admin");
-
-  // Password can be set with it's md5 value as well
-  // MD5(admin) = 21232f297a57a5a743894a0e4a801fc3
-  // ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
+  WiFi.mode(WIFI_STA); /* Station Point Only */
+  // WiFi.mode(WIFI_AP_STA); /* Both */
+  // WiFi.mode(WIFI_AP); /* Access Point Only */  
 
   ArduinoOTA.onStart([]() {
     String type;
@@ -135,7 +137,7 @@ void setup() {
   });  
   
   server.on("/list", [](){
-    server.send(200, "text/plain", "1] ip/blinkFast 2] ip/blinkSlow 3] ip/on 4] ip/off 5] ip/ota 6] ip/reset 7] ip/data");
+    server.send(200, "text/plain", "1] ip/sad 2] ip/smile 3] ip/neutral 4] ip/ota 5] ip/reset 6] ip/data");
     delay(1000);
   });
 
@@ -147,21 +149,23 @@ void setup() {
 
   server.on("/", handle_OnConnect);
   server.on("/toggle",toggleLED);   
-
-  server.begin();
-
-  dht.begin();
-
-  WiFi.softAPConfig(ip, gateway, subnet);
-  WiFi.softAP(mySsid, password);
-
   
+  server.on("/smile",handle_Smile);  
+  server.on("/sad",handle_Sad);
+  server.on("/neutral",handle_Neutral);
+  server.on("/blink",handle_Blink);
+  
+  WiFi.softAPConfig(ip, gateway, subnet);
+  WiFi.softAP(mySsid, password);  
 
   lc.shutdown(0,false);
   // Set brightness to a medium value
   lc.setIntensity(0,8);
   // Clear the display
   lc.clearDisplay(0);  
+
+  server.begin();
+  dht.begin();
 }
 
 void loop() {
@@ -195,56 +199,13 @@ void loop() {
   Serial.print("Humidity: ");
   Serial.println(Humidity);
   Serial.print("Light: ");
-  // Serial.println(valueInA1);
   Serial.print("Sound Provision: ");
- //  Serial.println(valueInA2);
-
-  drawFaces();
+ 
+  state_machine_serial();
+  
 }
 
-void toggleLED()
-{
-  digitalWrite(pin_led,!digitalRead(pin_led));
-  server.send(204,"");
-}
-
-void handle_OnConnect() {
-
-  Temperature = dht.readTemperature(); // Gets the values of the temperature
-  Humidity = dht.readHumidity(); // Gets the values of the humidity 
-  
-  int Light = analogRead(A0);
-
-  // digitalWrite(pinOut02, HIGH);                  // Y1
-  // digitalWrite(pinOut03, LOW);
-  // digitalWrite(pinOut04, LOW);
-  // delay(250);
-  // int Light = analogRead(pinInA0);             // Sensing voltage input in pin A0 and converting to integer values (0 - 1023)
-    // Serial.print("A1 = ");                       // Label the ouput 
-    // Serial.println (valueInA1);
-    // delay(750);
-
-  // digitalWrite(pinOut02, LOW);                   // Y2
-  // digitalWrite(pinOut03, HIGH);
-  // digitalWrite(pinOut04, LOW);
-  // delay(250);
-    // valueInA2 = analogRead(pinInA0);             // Sensing voltage input in pin A0 and converting to integer values (0 - 1023)
-    // Serial.print("A2 = ");                       // Label the ouput 
-    // Serial.println (valueInA2);
-    // delay(750);   
-
-  /* Temporary random mutation */
-  // Temperature = 28;
-  // Humidity = 80;
-  // int Light = 567;
-  // valueInA2 = 567;
-   
-  // server.send(200, "text/html", SendHTML(Temperature,Humidity, Light, valueInA2)); 
-  server.send(200, "text/html", SendHTML(Temperature,Humidity, Light)); 
-  
-  }
-
-String SendHTML(float Temperaturestat,float Humiditystat, float Lightstat){
+String SendHTML(float Temperaturestat,float Humiditystat, float Lightstat) {
   String ptr = "<!DOCTYPE html> <html>\n";
   ptr +="<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n";
   ptr +="<title>GUARDEE</title>\n";
@@ -264,53 +225,125 @@ String SendHTML(float Temperaturestat,float Humiditystat, float Lightstat){
   ptr +=" %</p>";
   ptr +="<p>Light: ";
   ptr +=(int) Lightstat;
-  //  qptr +=" hex</p>";
-  // ptr +="<p>Sound Provision: ";
-  // ptr +=(int) AnalogValuestat;
   ptr +=" hex</p>";
-  
   ptr +="</div>\n";
   ptr +="</body>\n";
   ptr +="</html>\n";
   return ptr;
   }
+void toggleLED() {
+  digitalWrite(pin_led,!digitalRead(pin_led));
+  server.send(204,"");
+}
 
-  void drawFaces(){
- /* // Display sad face
-  lc.setRow(0,0,sf[0]);
-  lc.setRow(0,1,sf[1]);
-  lc.setRow(0,2,sf[2]);
-  lc.setRow(0,3,sf[3]);
-  lc.setRow(0,4,sf[4]);
-  lc.setRow(0,5,sf[5]);
-  lc.setRow(0,6,sf[6]);
-  lc.setRow(0,7,sf[7]);
-  delay(delaytime);
+void handle_OnConnect() {
+  Temperature = dht.readTemperature(); // Gets the values of the temperature
+  Humidity = dht.readHumidity(); // Gets the values of the humidity   
+  int Light = analogRead(A0);
 
- */
-
-  /* 
-  // Display neutral face
-  lc.setRow(0,0,nf[0]);
-  lc.setRow(0,1,nf[1]);
-  lc.setRow(0,2,nf[2]);
-  lc.setRow(0,3,nf[3]);
-  lc.setRow(0,4,nf[4]);
-  lc.setRow(0,5,nf[5]);
-  lc.setRow(0,6,nf[6]);
-  lc.setRow(0,7,nf[7]);
-  delay(delaytime);
-
-  */
+  server.send(200, "text/html", SendHTML(Temperature,Humidity, Light)); 
   
-  // Display happy face
-  lc.setRow(0,0,hf[0]);
-  lc.setRow(0,1,hf[1]);
-  lc.setRow(0,2,hf[2]);
-  lc.setRow(0,3,hf[3]);
-  lc.setRow(0,4,hf[4]);
-  lc.setRow(0,5,hf[5]);
-  lc.setRow(0,6,hf[6]);
-  lc.setRow(0,7,hf[7]);
-  delay(delaytime);
+  }
+  
+void handle_Smile()  {
+  state_current = 1;
+  Temperature = dht.readTemperature(); // Gets the values of the temperature
+  Humidity = dht.readHumidity(); // Gets the values of the humidity   
+  int Light = analogRead(A0);
+
+  server.send(200, "text/html", SendHTML(Temperature,Humidity, Light)); 
+  
+   
+  }
+
+void handle_Sad()  {
+  state_current = 2;
+  Temperature = dht.readTemperature(); // Gets the values of the temperature
+  Humidity = dht.readHumidity(); // Gets the values of the humidity   
+  int Light = analogRead(A0);
+
+  server.send(200, "text/html", SendHTML(Temperature,Humidity, Light)); 
+   
+  }
+
+void handle_Neutral()  {
+  state_current = 3;
+  Temperature = dht.readTemperature(); // Gets the values of the temperature
+  Humidity = dht.readHumidity(); // Gets the values of the humidity   
+  int Light = analogRead(A0);
+
+  server.send(200, "text/html", SendHTML(Temperature,Humidity, Light)); 
+   
+  }
+
+void handle_Blink()  {
+  state_current = 3;
+  delay(1000);
+  state_current = 4;
+  delay(1000);
+  Temperature = dht.readTemperature(); // Gets the values of the temperature
+  Humidity = dht.readHumidity(); // Gets the values of the humidity   
+  int Light = analogRead(A0);
+
+  server.send(200, "text/html", SendHTML(Temperature,Humidity, Light)); 
+   
+  }
+
+void state_machine_serial() {
+ 
+  // state_previous = state_current; delay(1000);
+    
+ switch (state_current) {    
+  // void drawFaces(){
+    
+ // Display sad face
+   case 2: 
+    lc.setRow(0,0,sf[0]);
+    lc.setRow(0,1,sf[1]);
+    lc.setRow(0,2,sf[2]);
+    lc.setRow(0,3,sf[3]);
+    lc.setRow(0,4,sf[4]);
+    lc.setRow(0,5,sf[5]);
+    lc.setRow(0,6,sf[6]);
+    lc.setRow(0,7,sf[7]);
+    delay(delaytime);   
+    break; 
+
+   case 3: // Display neutral face
+    lc.setRow(0,0,nf[0]);
+    lc.setRow(0,1,nf[1]);
+    lc.setRow(0,2,nf[2]);
+    lc.setRow(0,3,nf[3]);
+    lc.setRow(0,4,nf[4]);
+    lc.setRow(0,5,nf[5]);
+    lc.setRow(0,6,nf[6]);
+    lc.setRow(0,7,nf[7]);
+    delay(delaytime);
+    break;
+ 
+   case 1: // Display happy face
+    lc.setRow(0,0,hf[0]);
+    lc.setRow(0,1,hf[1]);
+    lc.setRow(0,2,hf[2]);
+    lc.setRow(0,3,hf[3]);
+    lc.setRow(0,4,hf[4]);
+    lc.setRow(0,5,hf[5]);
+    lc.setRow(0,6,hf[6]);
+    lc.setRow(0,7,hf[7]);
+    delay(delaytime);
+    break;
+
+   case 4: // Display happy face
+    lc.setRow(0,0,bf[0]);
+    lc.setRow(0,1,bf[1]);
+    lc.setRow(0,2,bf[2]);
+    lc.setRow(0,3,bf[3]);
+    lc.setRow(0,4,bf[4]);
+    lc.setRow(0,5,bf[5]);
+    lc.setRow(0,6,bf[6]);
+    lc.setRow(0,7,bf[7]);
+    delay(delaytime);
+    break;
+    
+  }
 }
