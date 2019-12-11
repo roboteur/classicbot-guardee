@@ -24,7 +24,8 @@ float Temperature;
 float Humidity;
 
 uint8_t pin_led = 2;
-int pinInA0 = A0;   
+int pinInA0 = A0;
+int Light;   
 
 DHT dht(DHTPIN, DHTTYPE);
 ESP8266WebServer server;
@@ -185,11 +186,6 @@ void loop() {
     }
     ota_flag = false;
   }
-
-  // Sound Sensor
-  if(D3 == HIGH) {
-      digitalWrite(pin_led,!digitalRead(pin_led));
-    }
     
   server.handleClient();
 
@@ -230,7 +226,9 @@ String SendHTML(float Temperaturestat,float Humiditystat, float Lightstat) {
   ptr +="</body>\n";
   ptr +="</html>\n";
   return ptr;
+  
   }
+  
 void toggleLED() {
   digitalWrite(pin_led,!digitalRead(pin_led));
   server.send(204,"");
@@ -241,6 +239,13 @@ void handle_OnConnect() {
   Humidity = dht.readHumidity(); // Gets the values of the humidity   
   int Light = analogRead(A0);
 
+  if (Light > 900)  {
+    handle_Sad();
+    }
+  else  {
+    handle_Smile();
+    }
+    
   server.send(200, "text/html", SendHTML(Temperature,Humidity, Light)); 
   
   }
