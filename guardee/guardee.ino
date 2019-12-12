@@ -1,4 +1,12 @@
-/* ROBOT GUARDEE by The Roboteur */
+/* ROBOT GUARDEE (by The Roboteur)
+ *   
+ * Website: www.roboteur.me
+ * Facebook: facebook.com/TheRoboteur
+ * Instagram: instagram.com/the_roboteur
+ * YouTube: bitly.com/RoboteurTV  
+ * GitHub: github.com/roboteur
+ *  
+ */
 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
@@ -222,6 +230,7 @@ String SendHTML(float Temperaturestat,float Humiditystat, float Lightstat) {
   ptr +="<p>Light: ";
   ptr +=(int) Lightstat;
   ptr +=" hex</p>";
+  ptr +="<p><a href=\"/\"><button>REFRESH</button></a></p>";
   ptr +="</div>\n";
   ptr +="</body>\n";
   ptr +="</html>\n";
@@ -232,6 +241,7 @@ String SendHTML(float Temperaturestat,float Humiditystat, float Lightstat) {
 void toggleLED() {
   digitalWrite(pin_led,!digitalRead(pin_led));
   server.send(204,"");
+  
 }
 
 void handle_OnConnect() {
@@ -257,7 +267,6 @@ void handle_Smile()  {
   int Light = analogRead(A0);
 
   server.send(200, "text/html", SendHTML(Temperature,Humidity, Light)); 
-  
    
   }
 
