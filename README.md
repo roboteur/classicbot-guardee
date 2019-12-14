@@ -40,7 +40,23 @@
 ![Robot Construction](/robot-guardee-01.png)
 
 ## Wiring 
-
+* 8X8 LED Matrix
+   * VCC connect to 5V Breadboard Powersupply
+   * GND connect to GND Breadboard Powersupply
+   * DIN connect to D5 pin of Wemos D1 Mini (ESP8266)
+   * CS connect to D6 pin of Wemos D1 Mini (ESP8266)
+   * CLK connect to D7 pin of Wemos D1 Mini (ESP8266)
+   
+* Light Dependent Resistor (LDR) or Photo Sensor
+   * VCC connect to 5V Breadboard Powersupply
+   * GND connect to GND Breadboard Powersupply
+   * A0 connect to A0 of Wemos D1 Mini (ESP8266)
+   
+* Temperature and Humidity Sensor
+   * VCC connect to 5V Breadboard Powersupply
+   * GND connect to GND Breadboard Powersupply
+   * OUT connect to D1 pin of Wemos D1 Mini (ESP8266
+   
 ## Demo Video
 * Here's the link --> https://youtu.be/-PQkA54bA8s
 
