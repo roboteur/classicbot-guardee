@@ -36,6 +36,9 @@
 10. Long-legged Headers x 3 = $2.00 approx
 11. 18650 Battery x 2 = Depends on you. 
 
+## Robot Construction
+![Robot Construction](/robot-guardee-01.png)
+
 
 ## Additional Notes
 * If for some reason you cannot compile this code in Arduino IDE version 1.8.10 or up, revert to version 1.8.9
