@@ -1,4 +1,40 @@
 # Robot Guardee
+* Easy to build desktop companion robot
+* Most affordable and teaches sensor concepts and programming
+* Build Your Own For less than $20 (excluding battery)
+
+## Features
+* Smartphone Controlled
+* Over-The-Air Update
+* Code Design Pattern Included
+
+## How It Works 
+* Here's the link >> https://youtu.be/Y-y1LgC-yeM
+
+## Quick Start
+1. Setup The ESP8266
+    * Download Arduino IDE: https://www.arduino.cc/en/Main/Software
+    * Open Arduino IDE and click: File -> Preferences -> Additional Boards Manager --> Paste this     link: https://arduino.esp8266.com/stable/package_esp8266com_index.json
+    * Setup the board: Go to Tools -> Board -> Board Manager -> search ESP8266 Community, then click install
+    * Select the ESP8266 board: Tools -> Board -> NodeMCU 1.0 (ESP12E Module)
+    * Select the PORT: Tools -> PORT -> USB0 (or anything that works)
+    * Upload the Code: Sketch -> Upload (There should be no error. If there is, it is mostly about user permissions. Message me if you can't go through this.)
+2. Upload the code guardee.ino
+3. Find the IP Address from the Arduino IDE Serial Monitor. 
+4. Copy and paste the IP Address in the browser and start from there
+
+## Bill Of Materials
+1. Wemos D1 Mini (ESP8266) x 1  = $5.00 approx.
+2. 8x8 LED Matrix x 1  = $2.00 approx.
+3. 18650 Battery Holder x 2 slots = $1.00 approx.
+4. Temperature and Humidity Sensor = $2.00 approx.
+5. Light Dependent Resistor = $ 1.00 approx
+6. Solid Wires #22 x 3ft. = $1.00 approx.
+7. USB Cable x 1 = $2.00 approx.
+8. Half-sized breadboard x 1 = $2.00 approx.
+9. Breadboard Powersupply x 1 = $2.00 approx
+10. Long-legged Headers x 3 = $2.00 approx
+11. 18650 Battery x 2 = Depends on you. 
 
 
 ## Additional Notes
