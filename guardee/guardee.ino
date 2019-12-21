@@ -21,8 +21,8 @@
 #include "LedControl.h"
 #include "binary.h"
 
-char* password = "X9425TE9";
-char* mySsid = "ZTEH108N_3C01E";
+char* password = "ANYPASSWORD";
+char* mySsid = "ANYUSERID";
 
 bool ota_flag = true;
 uint16_t time_elapsed = 0;
