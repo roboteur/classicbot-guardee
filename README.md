@@ -37,7 +37,7 @@
 11. 18650 Battery x 2 = Depends on you. 
 
 ## Robot Construction
-![Robot Construction](/robot-guardee-01.png)
+![Robot Construction](./img/roboteur-guardee-construction.png)
 
 ## Wiring 
 * 8X8 LED Matrix

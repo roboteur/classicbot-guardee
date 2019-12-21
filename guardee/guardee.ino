@@ -24,8 +24,8 @@
 char* mySsid = "ANYUSERID";
 char* password = "ANYPASSWORD";
 
-bool ota_flag = true;
-uint16_t time_elapsed = 0;
+bool ota_time_trigger = true;
+uint16_t ota_time_consumed = 0;
 int state_current = 0;
 
 float Temperature;
@@ -183,16 +183,15 @@ void loop() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   
-  // OTA FLAG WORKS ONLY AT ROUTE IP/ota Unclear of this snippet.
-  if(ota_flag)
+  if(ota_time_trigger)
   {
-    while(time_elapsed < 25000)
+    while(ota_time_consumed < 25000)
     {
       ArduinoOTA.handle();
-      time_elapsed = millis();
+      ota_time_consumed = millis();
       delay(10);
     }
-    ota_flag = false;
+    ota_time_trigger = false;
   }
     
   server.handleClient();
