@@ -21,8 +21,8 @@
 #include "LedControl.h"
 #include "binary.h"
 
-char* password = "ANYPASSWORD";
 char* mySsid = "ANYUSERID";
+char* password = "ANYPASSWORD";
 
 bool ota_flag = true;
 uint16_t time_elapsed = 0;
