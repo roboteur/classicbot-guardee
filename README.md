@@ -60,6 +60,9 @@
 ## Demo Video
 * Here's the link --> https://youtu.be/-PQkA54bA8s
 
+## IDE
+ * Arduino IDE Version 1.8.9
+ 
 ## Additional Notes
 * Bug: If for some reason you cannot compile this code in Arduino IDE version 1.8.10 or up, revert to version 1.8.9.
 * Bug: AP STA modes causes confusion with OTA.
